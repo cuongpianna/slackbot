@@ -1,3 +1,4 @@
+import re
 import command
 
 class Event:
@@ -10,15 +11,17 @@ class Event:
 
         if events and len(events) > 0:
             for e in events:
-                self.test(e)
+                self.parse_event(e)
 
     def parse_event(self,event):
-        if event and 'text' in event and self.bot.bot_id in event['text']:
+        # if event and 'text' in event:
+        #     print(re.match(r'^<@UCA647D46>','<@UCA647D46> sass'))
+        if event and 'text' in event and self.bot.bot_id in event['text'] and re.match(r'^<@UCA647D46>',event['text']) is not None:
             self.handle_event(event['user'], event['text'].split(self.bot.bot_id)[1].strip().lower(), event['channel'])
-        # elif event and 'type' in event and event['type'] == 'message':
-        #     self.bot.slack_client.rtm_send_message(
-        #         event['channel'], 'Hihiihi'
-        #     )
+        elif event and 'type' in event and event['type'] == 'message':
+            self.bot.slack_client.rtm_send_message(
+                event['channel'], 'Hihiihi'
+            )
 
     def handle_event(self, user, command, channel):
         if command and channel:
